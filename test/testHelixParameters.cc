@@ -23,23 +23,21 @@ class testHelixParameters : public CppUnit::TestFixture {
   CPPUNIT_TEST_SUITE_END();
 public:
   void setUp() {
-    double vv[] = { 0.01, 0.02, -1.5, 0.03, 0.5 }; 
-    v = reco::HelixParameters::Parameters( vv );
+    const double vv[] = { 0.01, 0.02, -1.5, 0.03, 0.5 }; 
     //             d0    phi0  omega dz    tandip
     double ee[] = { 1.00, 0.10, 0.15, 0.20, 0.25,   // d0
 		          1.10, 0.30, 0.35, 0.40,   // phi0
                                 1.20, 0.45, 0.50,   // omega
                                       1.30, 0.55,   // dz
                                             1.40 }; // tandip
-    e = reco::HelixParameters::Error( ee );  
-    h = reco::HelixParameters( v, e );
-    q = vv[ 2 ] > 0 ? 1 : -1;
+    v = reco::Vector<5>( vv );
+    e = reco::Error<5>( ee );
+    q = vv[ 2 ] > 0 ? +1 : -1 ;
 
-    reco::HelixParameters::Point poca = h.poca();
-    reco::HelixParameters::Vector p = h.momentum();
-    reco::Error<6> cov = h.posMomError();
-    h1 = reco::HelixParameters( q, poca, p, cov );
-    err = h1.covariance();
+    h = reco::helix::Parameters( vv );
+    err = reco::helix::Covariance( ee );
+    reco::Error<6> cov = reco::helix::posMomError( h, err );
+    reco::helix::setFromCartesian( h.charge(), h.vertex(), h.momentum(), cov, h1, err1 );
   }
   void tearDown() {}
   void checkTrivial(); 
@@ -62,18 +60,21 @@ public:
   void checkCov44(); 
 private:
   int q;
-  reco::HelixParameters::Parameters v;
-  reco::HelixParameters::Error e;
-  reco::HelixParameters h, h1;
-  reco::HelixParameters::Error err;
+  reco::Vector<5> v;
+  reco::Error<5> e;
+  reco::helix::Parameters h, h1;
+  reco::helix::Covariance err, err1;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(testHelixParameters);
 
 void testHelixParameters::checkTrivial() {
-  CPPUNIT_ASSERT( h.parameters() == v );
-  CPPUNIT_ASSERT( h.covariance() == e );
-  CPPUNIT_ASSERT( h1.charge() == q );
+  for ( int i = 0; i < 5; ++ i )
+    CPPUNIT_ASSERT( h( 0 ) == v( 0 ) );
+  for ( int i = 0; i < 5; ++ i )
+    for ( int j = 0; j <= i; ++ j )
+  CPPUNIT_ASSERT( err( i, j ) == e( i, j ) );
+  CPPUNIT_ASSERT( h.charge() == q );
 }
 
 void testHelixParameters::checkParms() {
@@ -85,61 +86,61 @@ void testHelixParameters::checkParms() {
 }
 
 void testHelixParameters::checkCov00() {
-  CPPUNIT_ASSERT( fabs( err.get<0,0>() - e.get<0,0>() ) < 1.e-4 );
+  CPPUNIT_ASSERT( fabs( err(0,0) - err1(0,0) ) < 1.e-4 );
 }
 
 void testHelixParameters::checkCov01() {
-  CPPUNIT_ASSERT( fabs( err.get<0,1>() - e.get<0,1>() ) < 1.e-4 );
+  CPPUNIT_ASSERT( fabs( err(0,1) - err1(0,1) ) < 1.e-4 );
 }
 
 void testHelixParameters::checkCov02() {
-  CPPUNIT_ASSERT( fabs( err.get<0,2>() - e.get<0,2>() ) < 1.e-4 );
+  CPPUNIT_ASSERT( fabs( err(0,2) - err1(0,2) ) < 1.e-4 );
 }
 
 void testHelixParameters::checkCov03() {
-  CPPUNIT_ASSERT( fabs( err.get<0,3>() - e.get<0,3>() ) < 1.e-4 );
+  CPPUNIT_ASSERT( fabs( err(0,3) - err1(0,3) ) < 1.e-4 );
 }
 
 void testHelixParameters::checkCov04() {
-  CPPUNIT_ASSERT( fabs( err.get<0,4>() - e.get<0,4>() ) < 1.e-4 );
+  CPPUNIT_ASSERT( fabs( err(0,4) - err1(0,4) ) < 1.e-4 );
 }
 
 void testHelixParameters::checkCov11() {
-  CPPUNIT_ASSERT( fabs( err.get<1,1>() - e.get<1,1>() ) < 1.e-4 );
+  CPPUNIT_ASSERT( fabs( err(1,1) - err1(1,1) ) < 1.e-4 );
 }
 
 void testHelixParameters::checkCov12() {
-  CPPUNIT_ASSERT( fabs( err.get<1,2>() - e.get<1,2>() ) < 1.e-4 );
+  CPPUNIT_ASSERT( fabs( err(1,2) - err1(1,2) ) < 1.e-4 );
 }
 
 void testHelixParameters::checkCov13() {
-  CPPUNIT_ASSERT( fabs( err.get<1,3>() - e.get<1,3>() ) < 1.e-4 );
+  CPPUNIT_ASSERT( fabs( err(1,3) - err1(1,3) ) < 1.e-4 );
 }
 
 void testHelixParameters::checkCov14() {
-  CPPUNIT_ASSERT( fabs( err.get<1,4>() - e.get<1,4>() ) < 1.e-4 );
+  CPPUNIT_ASSERT( fabs( err(1,4) - err1(1,4) ) < 1.e-4 );
 }
 
 void testHelixParameters::checkCov22() {
-  CPPUNIT_ASSERT( fabs( err.get<2,2>() - e.get<2,2>() ) < 1.e-4 );
+  CPPUNIT_ASSERT( fabs( err(2,2) - err1(2,2) ) < 1.e-4 );
 }
 
 void testHelixParameters::checkCov23() {
-  CPPUNIT_ASSERT( fabs( err.get<2,3>() - e.get<2,3>() ) < 1.e-4 );
+  CPPUNIT_ASSERT( fabs( err(2,3) - err1(2,3) ) < 1.e-4 );
 }
 
 void testHelixParameters::checkCov24() {
-  CPPUNIT_ASSERT( fabs( err.get<2,4>() - e.get<2,4>() ) < 1.e-4 );
+  CPPUNIT_ASSERT( fabs( err(2,4) - err1(2,4) ) < 1.e-4 );
 }
 
 void testHelixParameters::checkCov33() {
-  CPPUNIT_ASSERT( fabs( err.get<3,3>() - e.get<3,3>() ) < 1.e-4 );
+  CPPUNIT_ASSERT( fabs( err(3,3) - err1(3,3) ) < 1.e-4 );
 }
 
 void testHelixParameters::checkCov34() {
-  CPPUNIT_ASSERT( fabs( err.get<3,4>() - e.get<3,4>() ) < 1.e-4 );
+  CPPUNIT_ASSERT( fabs( err(3,4) - err1(3,4) ) < 1.e-4 );
 }
 
 void testHelixParameters::checkCov44() {
-  CPPUNIT_ASSERT( fabs( err.get<4,4>() - e.get<4,4>() ) < 1.e-4 );
+  CPPUNIT_ASSERT( fabs( err(4,4) - err1(4,4) ) < 1.e-4 );
 }
