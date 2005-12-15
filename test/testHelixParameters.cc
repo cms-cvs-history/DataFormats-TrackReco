@@ -30,13 +30,13 @@ public:
                                 1.20, 0.45, 0.50,   // omega
                                       1.30, 0.55,   // dz
                                             1.40 }; // tandip
-    v = reco::Vector<5>( vv );
-    e = reco::Error<5>( ee );
+    v = math::Vector<5>( vv );
+    e = math::Error<5>( ee );
     q = vv[ 2 ] > 0 ? +1 : -1 ;
 
     h = reco::helix::Parameters( vv );
     err = reco::helix::Covariance( ee );
-    reco::Error<6> cov = reco::helix::posMomError( h, err );
+    math::Error<6> cov = reco::helix::posMomError( h, err );
     reco::helix::setFromCartesian( h.charge(), h.vertex(), h.momentum(), cov, h1, err1 );
   }
   void tearDown() {}
@@ -60,8 +60,8 @@ public:
   void checkCov44(); 
 private:
   int q;
-  reco::Vector<5> v;
-  reco::Error<5> e;
+  math::Vector<5> v;
+  math::Error<5> e;
   reco::helix::Parameters h, h1;
   reco::helix::Covariance err, err1;
 };
