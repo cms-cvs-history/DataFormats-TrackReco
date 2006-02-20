@@ -1,8 +1,0 @@
-<use name=DataFormats/Math>
-<use name=DataFormats/Common>
-<flags LCGDICT_ARGS="--deep">
-<export>
- <lib name=DataFormatsTrackReco>
- <use name=DataFormats/Math>
- <use name=DataFormats/Common>
-</export>
