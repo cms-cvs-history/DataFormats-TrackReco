@@ -30,7 +30,7 @@ public:
                                 1.20, 0.45, 0.50,   // omega
                                       1.30, 0.55,   // dz
                                             1.40 }; // tandip
-    v = math::Vector<5>( vv );
+    v = math::Vector<5>::type( vv[0], vv[1], vv[2], vv[3], vv[4] );
     e = math::Error<5>( ee );
     q = vv[ 2 ] > 0 ? +1 : -1 ;
 
@@ -60,7 +60,7 @@ public:
   void checkCov44(); 
 private:
   int q;
-  math::Vector<5> v;
+  math::Vector<5>::type v;
   math::Error<5> e;
   reco::helix::Parameters h, h1;
   reco::helix::Covariance err, err1;
