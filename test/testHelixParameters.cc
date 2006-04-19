@@ -1,5 +1,5 @@
 #include <cppunit/extensions/HelperMacros.h>
-#include "DataFormats/TrackReco/interface/HelixParameters.h"
+#include "DataFormats/TrackReco/interface/HelixUtils.h"
 
 class testHelixParameters : public CppUnit::TestFixture {
   CPPUNIT_TEST_SUITE(testHelixParameters);
