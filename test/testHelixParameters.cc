@@ -43,6 +43,7 @@ public:
     reco::helix::PosMomError cov = reco::helix::posMomError( h, err );
     reco::helix::setFromCartesian( h.charge(), h.vertex(), h.momentum(), cov, h1, err1 );
   }
+  
   void tearDown() {}
   void checkTrivial(); 
   void checkParms(); 
