@@ -8,9 +8,9 @@
  * also stored to avoid access to magnetic field.
  *
  * Model of 5 perigee parameters for Track fit:<BR>
- * <B> (q/R, theta, phi_0, d_0, z_0) </B><BR>
+ * <B> (kappa, theta, phi_0, d_0, z_0) </B><BR>
  * defined as:  <BR>
- *   <DT> q/R = charge unit divided by radius of curvature in transverse plane </DT> 
+ *   <DT> kappa = -0.3qB_z/p_T = signed transverse curvature </DT> 
  *   <DT> theta = polar angle at pca. to the beam line </DT>
  *   <DT> phi_0 = azimuth angle at pca. to the beam line </DT>
  *   <DT> d_0 = signed transverse dca. to the beam line (positive if the beam is outside the circle) </DT>
@@ -23,7 +23,7 @@
  * 
  * \author Thomas Speer, Luca Lista, Pascal Vanlaer
  *
- * \version $Id: TrackBase.h,v 1.20 2006/07/18 15:41:17 llista Exp $
+ * \version $Id: TrackBase.h,v 1.30 2006/08/03 14:06:55 vanlaer Exp $
  *
  */
 
@@ -45,7 +45,7 @@ namespace reco {
     /// 5 parameter covariance matrix
     typedef math::Error<dimension>::type CovarianceMatrix;
     /// matrix size
-    enum { covarianceSize = CovarianceMatrix::kSize };
+    enum { covarianceSize = dimension * ( dimension + 1 ) / 2 };
     /// position-momentum covariance matrix (6x6)
     typedef math::Error<6>::type PosMomError;
     /// spatial vector
@@ -82,7 +82,7 @@ namespace reco {
     /// i-th fit parameter ( i = 0, ... 4 )
     const double & parameter( int i ) const { return parameters_[ i ]; }
     /// track electric charge
-    int charge() const { return transverseCurvature() >0 ? -1 : 1; }
+    int charge() const { return transverseCurvature() > 0 ? -1 : 1; }
     /// The signed transverse curvature
     double transverseCurvature() const { return parameters_[ i_transverseCurvature ]; }
     /// track azimutal angle of point of closest approach to beamline
