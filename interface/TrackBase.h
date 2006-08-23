@@ -10,7 +10,7 @@
  * Model of 5 perigee parameters for Track fit:<BR>
  * <B> (kappa, theta, phi_0, d_0, z_0) </B><BR>
  * defined as:  <BR>
- *   <DT> kappa = -0.3qB_z/p_T = signed transverse curvature </DT> 
+ *   <DT> kappa = -qB_z/p_T = signed transverse curvature </DT> 
  *   <DT> theta = polar angle at pca. to the beam line </DT>
  *   <DT> phi_0 = azimuth angle at pca. to the beam line </DT>
  *   <DT> d_0 = signed transverse dca. to the beam line (positive if the beam is outside the circle) </DT>
@@ -23,7 +23,7 @@
  * 
  * \author Thomas Speer, Luca Lista, Pascal Vanlaer
  *
- * \version $Id: TrackBase.h,v 1.32 2006/08/21 13:15:40 llista Exp $
+ * \version $Id: TrackBase.h,v 1.29 2006/08/03 13:46:58 vanlaer Exp $
  *
  */
 
@@ -110,15 +110,15 @@ namespace reco {
     double error( int i ) const { return sqrt( covariance_[ idx( i, i ) ] ); }
     
     /// error on signed transverse curvature
-    double transverseCurvatureError() const { return error( i_transverseCurvature ); }
+    double transverseCurvatureError() const { return covariance_[ idx( i_transverseCurvature, i_transverseCurvature ) ]; }
     /// error on theta
-    double thetaError() const { return error( i_theta ); }
+    double thetaError() const { return covariance_[ idx( i_theta, i_theta ) ]; }
     /// error on phi0
-    double phi0Error() const { return error( i_phi0 ); }
+    double phi0Error() const { return covariance_[ idx ( i_phi0, i_phi0 ) ]; }
     /// error on d0
-    double d0Error() const { return error( i_d0 ); }
+    double d0Error() const { return covariance_[ idx( i_d0, i_d0 ) ]; }
     /// error on dx
-    double dzError() const { return error( i_dz ); }
+    double dzError() const { return covariance_[ idx( i_dz, i_dz ) ]; }
     /// return SMatrix
     CovarianceMatrix covariance() const { CovarianceMatrix m; fill( m ); return m; }
     /// fill SMatrix
