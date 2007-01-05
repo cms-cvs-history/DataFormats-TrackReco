@@ -3,6 +3,7 @@
 #include "DataFormats/TrackReco/interface/TrackExtra.h"
 #include "DataFormats/TrackReco/interface/GsfTrack.h"
 #include "DataFormats/TrackReco/interface/GsfTrackExtra.h"
+#include "DataFormats/Common/interface/AssociationMap.h"
 // #include "DataFormats/TrackReco/interface/GsfComponent5D.h"
 #include <vector>
 
@@ -32,6 +33,11 @@ namespace {
     edm::Ref<reco::GsfTrackCollection> r2;
     edm::RefProd<reco::GsfTrackCollection> rp2;
     edm::RefVector<reco::GsfTrackCollection> rv2;
+
+    edm::helpers::Key< edm::RefProd < std::vector < reco::Track > > > rpt1;
+    edm::AssociationMap<edm::OneToValue< std::vector<reco::Track>, double, unsigned int > > am1;
+    edm::helpers::Key< edm::RefProd < std::vector < reco::GsfTrack > > > rpt11;
+    edm::AssociationMap<edm::OneToValue< std::vector<reco::GsfTrack>, double, unsigned int > > am11;
 
 //     reco::GsfComponent5D s5;
   }
