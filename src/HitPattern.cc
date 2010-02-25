@@ -854,7 +854,9 @@ int HitPattern::stripLayersWithMeasurement() const {
 int HitPattern::pixelBarrelLayersWithMeasurement() const {
   int count = 0;
   uint32_t substr = PixelSubdetector::PixelBarrel;
-  for (uint32_t layer=1; layer<=3; layer++) {
+  // should get the variable for max number of layers
+  // and also decode if both doublets in one layer is hit
+  for (uint32_t layer=1; layer<=6; layer++) {
     if (getTrackerLayerCase(substr, layer) == 0) count++;
   }
   return count;
@@ -863,7 +865,7 @@ int HitPattern::pixelBarrelLayersWithMeasurement() const {
 int HitPattern::pixelEndcapLayersWithMeasurement() const {
   int count = 0;
   uint32_t substr = PixelSubdetector::PixelEndcap;
-  for (uint32_t layer=1; layer<=2; layer++) {
+  for (uint32_t layer=1; layer<=3; layer++) {
     if (getTrackerLayerCase(substr, layer) == 0) count++;
   }
   return count;
@@ -872,7 +874,7 @@ int HitPattern::pixelEndcapLayersWithMeasurement() const {
 int HitPattern::stripTIBLayersWithMeasurement() const {
   int count = 0;
   uint32_t substr = StripSubdetector::TIB;
-  for (uint32_t layer=1; layer<=4; layer++) {
+  for (uint32_t layer=1; layer<=1; layer++) {
     if (getTrackerLayerCase(substr, layer) == 0) count++;
   }
   return count;
@@ -881,7 +883,7 @@ int HitPattern::stripTIBLayersWithMeasurement() const {
 int HitPattern::stripTIDLayersWithMeasurement() const {
   int count = 0;
   uint32_t substr = StripSubdetector::TID;
-  for (uint32_t layer=1; layer<=3; layer++) {
+  for (uint32_t layer=1; layer<=1; layer++) {
     if (getTrackerLayerCase(substr, layer) == 0) count++;
   }
   return count;
@@ -890,7 +892,7 @@ int HitPattern::stripTIDLayersWithMeasurement() const {
 int HitPattern::stripTOBLayersWithMeasurement() const {
   int count = 0;
   uint32_t substr = StripSubdetector::TOB;
-  for (uint32_t layer=1; layer<=6; layer++) {
+  for (uint32_t layer=1; layer<=4; layer++) {
     if (getTrackerLayerCase(substr, layer) == 0) count++;
   }
   return count;
@@ -899,7 +901,7 @@ int HitPattern::stripTOBLayersWithMeasurement() const {
 int HitPattern::stripTECLayersWithMeasurement() const {
   int count = 0;
   uint32_t substr = StripSubdetector::TEC;
-  for (uint32_t layer=1; layer<=9; layer++) {
+  for (uint32_t layer=1; layer<=5; layer++) {
     if (getTrackerLayerCase(substr, layer) == 0) count++;
   }
   return count;
@@ -925,7 +927,7 @@ int HitPattern::stripLayersWithoutMeasurement() const {
 int HitPattern::pixelBarrelLayersWithoutMeasurement() const {
   int count = 0;
   uint32_t substr = PixelSubdetector::PixelBarrel;
-  for (uint32_t layer=1; layer<=3; layer++) {
+  for (uint32_t layer=1; layer<=6; layer++) {
     if (getTrackerLayerCase(substr, layer) == 1) count++;
   }
   return count;
@@ -934,7 +936,7 @@ int HitPattern::pixelBarrelLayersWithoutMeasurement() const {
 int HitPattern::pixelEndcapLayersWithoutMeasurement() const {
   int count = 0;
   uint32_t substr = PixelSubdetector::PixelEndcap;
-  for (uint32_t layer=1; layer<=2; layer++) {
+  for (uint32_t layer=1; layer<=3; layer++) {
     if (getTrackerLayerCase(substr, layer) == 1) count++;
   }
   return count;
@@ -943,7 +945,7 @@ int HitPattern::pixelEndcapLayersWithoutMeasurement() const {
 int HitPattern::stripTIBLayersWithoutMeasurement() const {
   int count = 0;
   uint32_t substr = StripSubdetector::TIB;
-  for (uint32_t layer=1; layer<=4; layer++) {
+  for (uint32_t layer=1; layer<=1; layer++) {
     if (getTrackerLayerCase(substr, layer) == 1) count++;
   }
   return count;
@@ -952,7 +954,7 @@ int HitPattern::stripTIBLayersWithoutMeasurement() const {
 int HitPattern::stripTIDLayersWithoutMeasurement() const {
   int count = 0;
   uint32_t substr = StripSubdetector::TID;
-  for (uint32_t layer=1; layer<=3; layer++) {
+  for (uint32_t layer=1; layer<=1; layer++) {
     if (getTrackerLayerCase(substr, layer) == 1) count++;
   }
   return count;
@@ -961,7 +963,7 @@ int HitPattern::stripTIDLayersWithoutMeasurement() const {
 int HitPattern::stripTOBLayersWithoutMeasurement() const {
   int count = 0;
   uint32_t substr = StripSubdetector::TOB;
-  for (uint32_t layer=1; layer<=6; layer++) {
+  for (uint32_t layer=1; layer<=4; layer++) {
     if (getTrackerLayerCase(substr, layer) == 1) count++;
   }
   return count;
@@ -970,7 +972,7 @@ int HitPattern::stripTOBLayersWithoutMeasurement() const {
 int HitPattern::stripTECLayersWithoutMeasurement() const {
   int count = 0;
   uint32_t substr = StripSubdetector::TEC;
-  for (uint32_t layer=1; layer<=9; layer++) {
+  for (uint32_t layer=1; layer<=5; layer++) {
     if (getTrackerLayerCase(substr, layer) == 1) count++;
   }
   return count;
@@ -996,7 +998,7 @@ int HitPattern::stripLayersTotallyOffOrBad() const {
 int HitPattern::pixelBarrelLayersTotallyOffOrBad() const {
   int count = 0;
   uint32_t substr = PixelSubdetector::PixelBarrel;
-  for (uint32_t layer=1; layer<=3; layer++) {
+  for (uint32_t layer=1; layer<=6; layer++) {
     if (getTrackerLayerCase(substr, layer) == 2) count++;
   }
   return count;
@@ -1005,7 +1007,7 @@ int HitPattern::pixelBarrelLayersTotallyOffOrBad() const {
 int HitPattern::pixelEndcapLayersTotallyOffOrBad() const {
   int count = 0;
   uint32_t substr = PixelSubdetector::PixelEndcap;
-  for (uint32_t layer=1; layer<=2; layer++) {
+  for (uint32_t layer=1; layer<=3; layer++) {
     if (getTrackerLayerCase(substr, layer) == 2) count++;
   }
   return count;
@@ -1014,7 +1016,7 @@ int HitPattern::pixelEndcapLayersTotallyOffOrBad() const {
 int HitPattern::stripTIBLayersTotallyOffOrBad() const {
   int count = 0;
   uint32_t substr = StripSubdetector::TIB;
-  for (uint32_t layer=1; layer<=4; layer++) {
+  for (uint32_t layer=1; layer<=1; layer++) {
     if (getTrackerLayerCase(substr, layer) == 2) count++;
   }
   return count;
@@ -1023,7 +1025,7 @@ int HitPattern::stripTIBLayersTotallyOffOrBad() const {
 int HitPattern::stripTIDLayersTotallyOffOrBad() const {
   int count = 0;
   uint32_t substr = StripSubdetector::TID;
-  for (uint32_t layer=1; layer<=3; layer++) {
+  for (uint32_t layer=1; layer<=1; layer++) {
     if (getTrackerLayerCase(substr, layer) == 2) count++;
   }
   return count;
@@ -1032,7 +1034,7 @@ int HitPattern::stripTIDLayersTotallyOffOrBad() const {
 int HitPattern::stripTOBLayersTotallyOffOrBad() const {
   int count = 0;
   uint32_t substr = StripSubdetector::TOB;
-  for (uint32_t layer=1; layer<=6; layer++) {
+  for (uint32_t layer=1; layer<=4; layer++) {
     if (getTrackerLayerCase(substr, layer) == 2) count++;
   }
   return count;
@@ -1041,7 +1043,7 @@ int HitPattern::stripTOBLayersTotallyOffOrBad() const {
 int HitPattern::stripTECLayersTotallyOffOrBad() const {
   int count = 0;
   uint32_t substr = StripSubdetector::TEC;
-  for (uint32_t layer=1; layer<=9; layer++) {
+  for (uint32_t layer=1; layer<=5; layer++) {
     if (getTrackerLayerCase(substr, layer) == 2) count++;
   }
   return count;
@@ -1067,7 +1069,7 @@ int HitPattern::stripLayersNull() const {
 int HitPattern::pixelBarrelLayersNull() const {
   int count = 0;
   uint32_t substr = PixelSubdetector::PixelBarrel;
-  for (uint32_t layer=1; layer<=3; layer++) {
+  for (uint32_t layer=1; layer<=6; layer++) {
     if (getTrackerLayerCase(substr, layer) == 999999) count++;
   }
   return count;
@@ -1076,7 +1078,7 @@ int HitPattern::pixelBarrelLayersNull() const {
 int HitPattern::pixelEndcapLayersNull() const {
   int count = 0;
   uint32_t substr = PixelSubdetector::PixelEndcap;
-  for (uint32_t layer=1; layer<=2; layer++) {
+  for (uint32_t layer=1; layer<=3; layer++) {
     if (getTrackerLayerCase(substr, layer) == 999999) count++;
   }
   return count;
@@ -1085,7 +1087,7 @@ int HitPattern::pixelEndcapLayersNull() const {
 int HitPattern::stripTIBLayersNull() const {
   int count = 0;
   uint32_t substr = StripSubdetector::TIB;
-  for (uint32_t layer=1; layer<=4; layer++) {
+  for (uint32_t layer=1; layer<=1; layer++) {
     if (getTrackerLayerCase(substr, layer) == 999999) count++;
   }
   return count;
@@ -1094,7 +1096,7 @@ int HitPattern::stripTIBLayersNull() const {
 int HitPattern::stripTIDLayersNull() const {
   int count = 0;
   uint32_t substr = StripSubdetector::TID;
-  for (uint32_t layer=1; layer<=3; layer++) {
+  for (uint32_t layer=1; layer<=1; layer++) {
     if (getTrackerLayerCase(substr, layer) == 999999) count++;
   }
   return count;
@@ -1103,7 +1105,7 @@ int HitPattern::stripTIDLayersNull() const {
 int HitPattern::stripTOBLayersNull() const {
   int count = 0;
   uint32_t substr = StripSubdetector::TOB;
-  for (uint32_t layer=1; layer<=6; layer++) {
+  for (uint32_t layer=1; layer<=4; layer++) {
     if (getTrackerLayerCase(substr, layer) == 999999) count++;
   }
   return count;
@@ -1112,7 +1114,7 @@ int HitPattern::stripTOBLayersNull() const {
 int HitPattern::stripTECLayersNull() const {
   int count = 0;
   uint32_t substr = StripSubdetector::TEC;
-  for (uint32_t layer=1; layer<=9; layer++) {
+  for (uint32_t layer=1; layer<=5; layer++) {
     if (getTrackerLayerCase(substr, layer) == 999999) count++;
   }
   return count;
