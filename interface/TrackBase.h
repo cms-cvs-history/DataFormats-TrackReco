@@ -46,7 +46,7 @@
  * 
  * \author Thomas Speer, Luca Lista, Pascal Vanlaer, Juan Alcaraz
  *
- * \version $Id: TrackBase.h,v 1.78 2009/10/21 13:04:14 mangano Exp $
+ * \version $Id: TrackBase.h,v 1.80 2011/02/10 17:51:27 vlimant Exp $
  *
  */
 
@@ -56,6 +56,7 @@
 #include "DataFormats/Math/interface/Point3D.h"
 #include "DataFormats/Math/interface/Error.h"
 #include "DataFormats/TrackReco/interface/HitPattern.h"
+#include "DataFormats/BeamSpot/interface/BeamSpot.h"
 
 namespace reco {
 
@@ -158,6 +159,12 @@ namespace reco {
     double dxy(const Point& myBeamSpot) const { 
       return ( - (vx()-myBeamSpot.x()) * py() + (vy()-myBeamSpot.y()) * px() ) / pt(); 
     }
+
+    /// dxy parameter with respect to the beamSpot taking into account the beamspot slopes WARNING: this quantity can only be interpreted as a minimum transverse distance if beamSpot, if the beam spot is reasonably close to the refPoint, since linear approximations are involved). This is a good approximation for Tracker tracks.
+    double dxy(const BeamSpot& theBeamSpot) const { 
+      return dxy(theBeamSpot.position(vz()));
+    }
+
     /// dsz parameter with respect to a user-given beamSpot (WARNING: this quantity can only be interpreted as the distance in the S-Z plane to the beamSpot, if the beam spot is reasonably close to the refPoint, since linear approximations are involved). This is a good approximation for Tracker tracks.
     double dsz(const Point& myBeamSpot) const { 
       return (vz()-myBeamSpot.z())*pt()/p() - ((vx()-myBeamSpot.x())*px()+(vy()-myBeamSpot.y())*py())/pt() *pz()/p(); 
@@ -225,6 +232,15 @@ namespace reco {
     unsigned short numberOfValidHits() const { return hitPattern_.numberOfValidHits(); }
     /// number of cases where track crossed a layer without getting a hit.
     unsigned short numberOfLostHits() const { return hitPattern_.numberOfLostHits(); }
+    /// fraction of valid hits on the track
+    double validFraction() const {
+      int valid = hitPattern_.numberOfValidTrackerHits();
+      int lost  = hitPattern_.numberOfLostTrackerHits();
+      int lostIn = trackerExpectedHitsInner_.numberOfLostTrackerHits();
+      int lostOut = trackerExpectedHitsOuter_.numberOfLostTrackerHits();
+      if ((valid+lost+lostIn+lostOut)==0) return -1;
+      return valid/(1.0*(valid+lost+lostIn+lostOut));
+    }
     /// set hit patterns from vector of hit references
     template<typename C>
     void setHitPattern( const C & c ) { hitPattern_.set( c.begin(), c.end() ); }
