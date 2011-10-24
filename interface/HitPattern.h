@@ -11,6 +11,7 @@
 // Jean-Roch Vlimant
 // Kevin Burkett
 // Boris Mangano
+// Giovanni Petrucciani
 //
 // Hit pattern is the summary information of the hits associated to track in
 // AOD.  When RecHits are no longer available, the compact hit pattern should
@@ -112,8 +113,9 @@
 #include "DataFormats/DetId/interface/DetId.h"
 #include "DataFormats/SiPixelDetId/interface/PixelSubdetector.h"
 #include "DataFormats/SiStripDetId/interface/StripSubdetector.h"
+#include "DataFormats/MuonDetId/interface/MuonSubdetId.h"
 #include "DataFormats/TrackingRecHit/interface/TrackingRecHitFwd.h"
-
+#include "FWCore/Utilities/interface/Likely.h"
 namespace reco {
   class HitPattern {
   public:
@@ -143,6 +145,29 @@ namespace reco {
 	set(*hit, counter);
     }
 
+
+    // generic count methods
+    typedef bool filterType(unsigned int);
+    int countHits(filterType filter, bool fullScan) const {
+      int count = 0;
+      for (int i=0; i<(PatternSize * 32) / HitSize; i++) {
+	uint32_t pattern = getHitPattern(i);
+	if (pattern == 0 && !fullScan) break;
+	if (filter(pattern)) ++count;
+      }
+      return count;
+    }
+
+    int countTypedHits(filterType typeFilter, filterType filter, bool fullScan) const {
+      int count = 0;
+      for (int i=0; i<(PatternSize * 32) / HitSize; i++) {
+	uint32_t pattern = getHitPattern(i);
+	if (pattern == 0 && !fullScan) break;
+	if (typeFilter(pattern)&&filter(pattern)) ++count;
+      }
+      return count;
+    }
+
     // print the pattern of the position-th hit
     void printHitPattern (int position, std::ostream &stream) const;
     void print (std::ostream &stream = std::cout) const;
@@ -153,41 +178,41 @@ namespace reco {
     // get the pattern of the position-th hit
     uint32_t getHitPattern(int position) const; 
 
-    bool trackerHitFilter(uint32_t pattern) const; // tracker hit
-    bool muonHitFilter(uint32_t pattern) const;    // muon hit
+    static bool trackerHitFilter(uint32_t pattern); // tracker hit
+    static bool muonHitFilter(uint32_t pattern);    // muon hit
 
-    uint32_t getSubStructure(uint32_t pattern) const;  // sub-structure
-    bool pixelHitFilter(uint32_t pattern) const;       // pixel
-    bool pixelBarrelHitFilter(uint32_t pattern) const; // pixel barrel
-    bool pixelEndcapHitFilter(uint32_t pattern) const; // pixel endcap
-    bool stripHitFilter(uint32_t pattern) const;       // strip 
-    bool stripTIBHitFilter(uint32_t pattern) const;    // strip TIB
-    bool stripTIDHitFilter(uint32_t pattern) const;    // strip TID
-    bool stripTOBHitFilter(uint32_t pattern) const;    // strip TOB
-    bool stripTECHitFilter(uint32_t pattern) const;    // strip TEC
-    bool muonDTHitFilter(uint32_t pattern) const;      // muon DT
-    bool muonCSCHitFilter(uint32_t pattern) const;     // muon CSC
-    bool muonRPCHitFilter(uint32_t pattern) const;     // muon RPC
+    static uint32_t getSubStructure(uint32_t pattern);  // sub-structure
+    static bool pixelHitFilter(uint32_t pattern);       // pixel
+    static bool pixelBarrelHitFilter(uint32_t pattern); // pixel barrel
+    static bool pixelEndcapHitFilter(uint32_t pattern); // pixel endcap
+    static bool stripHitFilter(uint32_t pattern);       // strip 
+    static bool stripTIBHitFilter(uint32_t pattern);    // strip TIB
+    static bool stripTIDHitFilter(uint32_t pattern);    // strip TID
+    static bool stripTOBHitFilter(uint32_t pattern);    // strip TOB
+    static bool stripTECHitFilter(uint32_t pattern);    // strip TEC
+    static bool muonDTHitFilter(uint32_t pattern);      // muon DT
+    static bool muonCSCHitFilter(uint32_t pattern);     // muon CSC
+    static bool muonRPCHitFilter(uint32_t pattern);     // muon RPC
 
-    uint32_t getLayer(uint32_t pattern) const; // sub-sub-structure
-    uint32_t getSubSubStructure(uint32_t pattern) const; // sub-sub-structure
+    static uint32_t getLayer(uint32_t pattern); // sub-sub-structure
+    static uint32_t getSubSubStructure(uint32_t pattern); // sub-sub-structure
 
     /// Muon station (1-4). Only valid for muon patterns, of course.
-    uint32_t getMuonStation(uint32_t pattern) const;  // only for patterns from muon, of course
+    static uint32_t getMuonStation(uint32_t pattern);  // only for patterns from muon, of course
     /// DT superlayer (1-3). Only valid for muon DT patterns, of course.
-    uint32_t getDTSuperLayer(uint32_t pattern) const; // only for DT patterns
+    static uint32_t getDTSuperLayer(uint32_t pattern); // only for DT patterns
     /// CSC ring (1-4). Only valid for muon CSC patterns, of course.
-    uint32_t getCSCRing(uint32_t pattern) const ; 
+    static uint32_t getCSCRing(uint32_t pattern) ; 
     /// RPC layer: for station 1 and 2, layer = 1(inner) or 2(outer); for station 3, 4 layer is always 0. Only valid for muon RPC patterns, of course.
-    uint32_t getRPCLayer(uint32_t pattern) const ; 
+    static uint32_t getRPCLayer(uint32_t pattern) ; 
     /// RPC region: 0 = barrel, 1 = endcap. Only valid for muon RPC patterns, of course.
-    uint32_t getRPCregion(uint32_t pattern) const;
+    static uint32_t getRPCregion(uint32_t pattern);
 
-    uint32_t getHitType(uint32_t pattern) const;   // hit type
-    bool validHitFilter(uint32_t pattern) const;   // hit type 0 = valid
-    bool type_1_HitFilter(uint32_t pattern) const; // hit type 1
-    bool type_2_HitFilter(uint32_t pattern) const; // hit type 2
-    bool type_3_HitFilter(uint32_t pattern) const; // hit type 3
+    static uint32_t getHitType(uint32_t pattern);   // hit type
+    static bool validHitFilter(uint32_t pattern);   // hit type 0 = valid
+    static bool type_1_HitFilter(uint32_t pattern); // hit type 1
+    static bool type_2_HitFilter(uint32_t pattern); // hit type 2
+    static bool type_3_HitFilter(uint32_t pattern); // hit type 3
 
     static uint32_t getSide (uint32_t pattern);		// mono (0) or stereo (1)
 
@@ -348,6 +373,421 @@ namespace reco {
     // detector side for tracker modules (mono/stereo)
     static uint32_t isStereo (DetId);
   };
-} 
 
+  // inline function
+
+  inline bool HitPattern::pixelHitFilter(uint32_t pattern) { 
+    if  unlikely(!trackerHitFilter(pattern)) return false;
+    uint32_t substructure = getSubStructure(pattern);
+    if (substructure == PixelSubdetector::PixelBarrel || 
+	substructure == PixelSubdetector::PixelEndcap) return true; 
+    return false;
+  }
+  
+  inline bool HitPattern::pixelBarrelHitFilter(uint32_t pattern) { 
+    if  unlikely(!trackerHitFilter(pattern)) return false;
+    uint32_t substructure = getSubStructure(pattern);
+    if (substructure == PixelSubdetector::PixelBarrel) return true; 
+    return false;
+  }
+  
+  inline bool HitPattern::pixelEndcapHitFilter(uint32_t pattern) { 
+    if  unlikely(!trackerHitFilter(pattern)) return false;
+    uint32_t substructure = getSubStructure(pattern);
+    if (substructure == PixelSubdetector::PixelEndcap) return true; 
+    return false;
+  }
+  
+  inline bool HitPattern::stripHitFilter(uint32_t pattern) { 
+    if  unlikely(!trackerHitFilter(pattern)) return false;
+    uint32_t substructure = getSubStructure(pattern);
+    if (substructure == StripSubdetector::TIB ||
+	substructure == StripSubdetector::TID ||
+	substructure == StripSubdetector::TOB ||
+	substructure == StripSubdetector::TEC) return true; 
+    return false;
+  }
+  
+  inline bool HitPattern::stripTIBHitFilter(uint32_t pattern) { 
+    if  unlikely(!trackerHitFilter(pattern)) return false;
+    uint32_t substructure = getSubStructure(pattern);
+    if (substructure == StripSubdetector::TIB) return true; 
+    return false;
+  }
+  
+  inline bool HitPattern::stripTIDHitFilter(uint32_t pattern) { 
+    if  unlikely(!trackerHitFilter(pattern)) return false;
+    uint32_t substructure = getSubStructure(pattern);
+    if (substructure == StripSubdetector::TID) return true; 
+    return false;
+  }
+  
+  inline bool HitPattern::stripTOBHitFilter(uint32_t pattern) { 
+    if  unlikely(!trackerHitFilter(pattern)) return false;
+    uint32_t substructure = getSubStructure(pattern);
+    if (substructure == StripSubdetector::TOB) return true; 
+    return false;
+  }
+  
+  inline bool HitPattern::stripTECHitFilter(uint32_t pattern) { 
+    if  unlikely(!trackerHitFilter(pattern)) return false;
+    uint32_t substructure = getSubStructure(pattern);
+    if (substructure == StripSubdetector::TEC) return true; 
+    return false;
+  }
+  
+  inline bool HitPattern::muonDTHitFilter(uint32_t pattern) { 
+    if  unlikely(!muonHitFilter(pattern)) return false;
+    uint32_t substructure = getSubStructure(pattern);
+    if (substructure == (uint32_t) MuonSubdetId::DT) return true; 
+    return false;
+  }
+  
+  inline bool HitPattern::muonCSCHitFilter(uint32_t pattern) { 
+    if  unlikely(!muonHitFilter(pattern)) return false;
+    uint32_t substructure = getSubStructure(pattern);
+    if (substructure == (uint32_t) MuonSubdetId::CSC) return true; 
+    return false;
+  }
+
+  inline bool HitPattern::muonRPCHitFilter(uint32_t pattern) { 
+    if  unlikely(!muonHitFilter(pattern)) return false;
+    uint32_t substructure = getSubStructure(pattern);
+    if (substructure == (uint32_t) MuonSubdetId::RPC) return true; 
+    return false;
+  }
+  
+  
+  inline bool HitPattern::trackerHitFilter(uint32_t pattern) {
+    if  unlikely(pattern == 0) return false;
+    if (((pattern>>SubDetectorOffset) & SubDetectorMask) == 1) return true;
+    return false;
+  }
+  
+  inline bool HitPattern::muonHitFilter(uint32_t pattern) {
+    if  unlikely(pattern == 0) return false;
+    if (((pattern>>SubDetectorOffset) & SubDetectorMask) == 0) return true; 
+    return false;
+  }
+
+
+  inline uint32_t HitPattern::getSubStructure(uint32_t pattern) {
+    if  unlikely(pattern == 0) return 999999;
+    return ((pattern >> SubstrOffset) & SubstrMask);
+  }
+  
+  
+  inline uint32_t HitPattern::getLayer(uint32_t pattern) {
+    if  unlikely(pattern == 0) return 999999;
+    return ((pattern>>LayerOffset) & LayerMask);
+  }
+  
+  inline uint32_t HitPattern::getSubSubStructure(uint32_t pattern) {
+    if  unlikely(pattern == 0) return 999999;
+    return ((pattern>>LayerOffset) & LayerMask);
+  }
+  
+  
+  inline uint32_t HitPattern::getSide (uint32_t pattern)  {
+    if  unlikely(pattern == 0) return 999999;
+    return (pattern >> SideOffset) & SideMask;
+  }
+  
+  inline uint32_t HitPattern::getHitType( uint32_t pattern ) {
+    if  unlikely(pattern == 0) return 999999;
+    return ((pattern>>HitTypeOffset) & HitTypeMask);
+  }
+  
+  inline uint32_t HitPattern::getMuonStation(uint32_t pattern) {
+    return (getSubSubStructure(pattern)>>2) + 1;
+  }
+  
+  inline uint32_t HitPattern::getDTSuperLayer(uint32_t pattern) {
+    return (getSubSubStructure(pattern) & 3) + 1;
+  }
+  
+  inline uint32_t HitPattern::getCSCRing(uint32_t pattern) {
+    return (getSubSubStructure(pattern) & 3) + 1;
+  }
+  
+  inline uint32_t HitPattern::getRPCLayer(uint32_t pattern) {
+    uint32_t sss = getSubSubStructure(pattern), stat = sss >> 2;
+    if likely(stat <= 1) return ((sss >> 1) & 1) + 1;
+    return 0;
+  }
+  
+  inline uint32_t HitPattern::getRPCregion(uint32_t pattern) {
+    return getSubSubStructure(pattern) & 1;
+  }
+  
+  
+  inline bool  HitPattern::validHitFilter(uint32_t pattern) {
+    if (getHitType(pattern) == 0) return true; 
+    return false;
+  }
+  
+  inline bool  HitPattern::type_1_HitFilter(uint32_t pattern) {
+    if (getHitType(pattern) == 1) return true; 
+    return false;
+  }
+  
+  inline bool  HitPattern::type_2_HitFilter(uint32_t pattern) {
+    if (getHitType(pattern) == 2) return true; 
+    return false;
+  }
+  
+  inline bool  HitPattern::type_3_HitFilter(uint32_t pattern) {
+    if (getHitType(pattern) == 3) return true; 
+    return false;
+  }
+  
+
+  // count methods
+
+// valid
+
+inline int HitPattern::numberOfValidHits() const {
+  return countHits(validHitFilter, false);
+}
+
+inline int HitPattern::numberOfValidTrackerHits() const {
+  return countTypedHits(validHitFilter, trackerHitFilter, false);
+}
+
+inline int HitPattern::numberOfValidMuonHits() const {
+  return countTypedHits(validHitFilter, muonHitFilter, false);
+}
+
+inline int HitPattern::numberOfValidPixelHits() const {
+  return countTypedHits(validHitFilter, pixelHitFilter, false);
+}
+
+inline int HitPattern::numberOfValidPixelBarrelHits() const {
+  return countTypedHits(validHitFilter, pixelBarrelHitFilter, false);
+}
+
+inline int HitPattern::numberOfValidPixelEndcapHits() const {
+  return countTypedHits(validHitFilter, pixelEndcapHitFilter, false);
+}
+
+inline int HitPattern::numberOfValidStripHits() const {
+  return countTypedHits(validHitFilter, stripHitFilter, false);
+}
+
+inline int HitPattern::numberOfValidStripTIBHits() const {
+  return countTypedHits(validHitFilter, stripTIBHitFilter, false);
+}
+
+inline int HitPattern::numberOfValidStripTIDHits() const {
+  return countTypedHits(validHitFilter, stripTIDHitFilter, false);
+}
+
+inline int HitPattern::numberOfValidStripTOBHits() const {
+  return countTypedHits(validHitFilter, stripTOBHitFilter, false);
+}
+
+inline int HitPattern::numberOfValidStripTECHits() const {
+  return countTypedHits(validHitFilter, stripTECHitFilter, false);
+}
+
+inline int HitPattern::numberOfValidMuonDTHits() const {
+  return countTypedHits(validHitFilter, muonDTHitFilter, false);
+}
+
+inline int HitPattern::numberOfValidMuonCSCHits() const {
+  return countTypedHits(validHitFilter, muonCSCHitFilter, false);
+}
+
+inline int HitPattern::numberOfValidMuonRPCHits() const {
+  return countTypedHits(validHitFilter, muonRPCHitFilter, false);
+}
+
+// lost
+inline int HitPattern::numberOfLostHits() const {
+  return countHits(type_1_HitFilter, true);
+}
+
+inline int HitPattern::numberOfLostTrackerHits() const {
+  return countTypedHits(type_1_HitFilter, trackerHitFilter, true);
+}
+
+inline int HitPattern::numberOfLostMuonHits() const {
+  return countTypedHits(type_1_HitFilter, muonHitFilter, true);
+}
+
+inline int HitPattern::numberOfLostPixelHits() const {
+  return countTypedHits(type_1_HitFilter, pixelHitFilter, true);
+}
+
+inline int HitPattern::numberOfLostPixelBarrelHits() const {
+  return countTypedHits(type_1_HitFilter, pixelBarrelHitFilter, true);
+}
+
+inline int HitPattern::numberOfLostPixelEndcapHits() const {
+  return countTypedHits(type_1_HitFilter, pixelEndcapHitFilter, true);
+}
+
+inline int HitPattern::numberOfLostStripHits() const {
+  return countTypedHits(type_1_HitFilter, stripHitFilter, true);
+}
+
+inline int HitPattern::numberOfLostStripTIBHits() const {
+  return countTypedHits(type_1_HitFilter, stripTIBHitFilter, true);
+}
+
+inline int HitPattern::numberOfLostStripTIDHits() const {
+  return countTypedHits(type_1_HitFilter, stripTIDHitFilter, true);
+}
+
+inline int HitPattern::numberOfLostStripTOBHits() const {
+  return countTypedHits(type_1_HitFilter, stripTOBHitFilter, true);
+}
+
+inline int HitPattern::numberOfLostStripTECHits() const {
+  return countTypedHits(type_1_HitFilter, stripTECHitFilter, true);
+}
+
+inline int HitPattern::numberOfLostMuonDTHits() const {
+  return countTypedHits(type_1_HitFilter, muonDTHitFilter, true);
+}
+
+inline int HitPattern::numberOfLostMuonCSCHits() const {
+  return countTypedHits(type_1_HitFilter, muonCSCHitFilter, true);
+}
+
+inline int HitPattern::numberOfLostMuonRPCHits() const {
+  return countTypedHits(type_1_HitFilter, muonRPCHitFilter, true);
+}
+
+
+// bad
+inline int HitPattern::numberOfBadHits() const {
+  return countHits(type_3_HitFilter, true);
+}
+
+inline int HitPattern::numberOfBadMuonHits() const {
+  return countTypedHits(type_2_HitFilter, muonHitFilter, true);
+}
+
+inline int HitPattern::numberOfBadMuonDTHits() const {
+  return countTypedHits(type_2_HitFilter, muonDTHitFilter, true);
+}
+
+inline int HitPattern::numberOfBadMuonCSCHits() const {
+  return countTypedHits(type_2_HitFilter, muonCSCHitFilter, true);
+}
+
+inline int HitPattern::numberOfBadMuonRPCHits() const {
+  return countTypedHits(type_2_HitFilter, muonRPCHitFilter, true);
+}
+
+
+// inactive
+inline int HitPattern::numberOfInactiveHits() const {
+  return countHits(type_2_HitFilter, true);
+}
+
+inline int HitPattern::numberOfInactiveTrackerHits() const {
+  return countTypedHits(type_2_HitFilter, trackerHitFilter, true);
+}
+
+
+
+
+
+
+  
+  inline int HitPattern::trackerLayersWithMeasurement() const {
+    return pixelLayersWithMeasurement() + 
+      stripLayersWithMeasurement();
+  }
+  
+  inline int HitPattern::pixelLayersWithMeasurement() const {
+    return pixelBarrelLayersWithMeasurement() +
+      pixelEndcapLayersWithMeasurement();
+  }
+  
+  inline int HitPattern::stripLayersWithMeasurement() const {
+    return stripTIBLayersWithMeasurement() + 
+      stripTIDLayersWithMeasurement() +
+      stripTOBLayersWithMeasurement() + 
+      stripTECLayersWithMeasurement();
+  }
+  
+
+  inline int HitPattern::trackerLayersWithoutMeasurement() const {
+    return pixelLayersWithoutMeasurement() + 
+      stripLayersWithoutMeasurement();
+  }
+  
+  inline int HitPattern::pixelLayersWithoutMeasurement() const {
+    return pixelBarrelLayersWithoutMeasurement() +
+      pixelEndcapLayersWithoutMeasurement();
+  }
+  
+  inline int HitPattern::stripLayersWithoutMeasurement() const {
+    return stripTIBLayersWithoutMeasurement() + 
+      stripTIDLayersWithoutMeasurement() +
+      stripTOBLayersWithoutMeasurement() + 
+      stripTECLayersWithoutMeasurement();
+  }
+
+
+  inline int HitPattern::trackerLayersTotallyOffOrBad() const {
+    return pixelLayersTotallyOffOrBad() + 
+      stripLayersTotallyOffOrBad();
+  }
+  
+  inline int HitPattern::pixelLayersTotallyOffOrBad() const {
+    return pixelBarrelLayersTotallyOffOrBad() +
+      pixelEndcapLayersTotallyOffOrBad();
+  }
+  
+  inline int HitPattern::stripLayersTotallyOffOrBad() const {
+    return stripTIBLayersTotallyOffOrBad() + 
+      stripTIDLayersTotallyOffOrBad() +
+      stripTOBLayersTotallyOffOrBad() + 
+      stripTECLayersTotallyOffOrBad();
+  }
+  
+  inline int HitPattern::trackerLayersNull() const {
+    return pixelLayersNull() + 
+      stripLayersNull();
+  }
+  
+  inline int HitPattern::pixelLayersNull() const {
+    return pixelBarrelLayersNull() +
+      pixelEndcapLayersNull();
+  }
+  
+  inline int HitPattern::stripLayersNull() const {
+    return stripTIBLayersNull() + 
+      stripTIDLayersNull() +
+      stripTOBLayersNull() + 
+      stripTECLayersNull();
+  }
+  
+
+  inline int HitPattern::muonStationsWithValidHits() const { return muonStations(0, 0); }
+  inline int HitPattern::muonStationsWithBadHits()   const { return muonStations(0, 3); }
+  inline int HitPattern::muonStationsWithAnyHits()   const { return muonStations(0,-1); }
+  inline int HitPattern::dtStationsWithValidHits()   const { return muonStations(1, 0); }
+  inline int HitPattern::dtStationsWithBadHits()     const { return muonStations(1, 3); }
+  inline int HitPattern::dtStationsWithAnyHits()     const { return muonStations(1,-1); }
+  inline int HitPattern::cscStationsWithValidHits()  const { return muonStations(2, 0); }
+  inline int HitPattern::cscStationsWithBadHits()    const { return muonStations(2, 3); }
+  inline int HitPattern::cscStationsWithAnyHits()    const { return muonStations(2,-1); }
+  inline int HitPattern::rpcStationsWithValidHits()  const { return muonStations(3, 0); }
+  inline int HitPattern::rpcStationsWithBadHits()    const { return muonStations(3, 3); }
+  inline int HitPattern::rpcStationsWithAnyHits()    const { return muonStations(3,-1); }
+  
+  inline int HitPattern::innermostMuonStationWithValidHits() const { return innermostMuonStationWithHits(0);  }
+  inline int HitPattern::innermostMuonStationWithBadHits()   const { return innermostMuonStationWithHits(3);  }
+  inline int HitPattern::innermostMuonStationWithAnyHits()   const { return innermostMuonStationWithHits(-1); }
+  inline int HitPattern::outermostMuonStationWithValidHits() const { return outermostMuonStationWithHits(0);  }
+  inline int HitPattern::outermostMuonStationWithBadHits()   const { return outermostMuonStationWithHits(3);  }
+  inline int HitPattern::outermostMuonStationWithAnyHits()   const { return outermostMuonStationWithHits(-1); }
+
+}
+  
 #endif
