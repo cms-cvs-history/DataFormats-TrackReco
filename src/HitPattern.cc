@@ -901,7 +901,7 @@ int HitPattern::pixelBarrelLayersWithMeasurement() const {
   int count = 0;
   uint32_t substr = PixelSubdetector::PixelBarrel;
   // TODO should get the variable for max number of layers (not hardcode it!)
-  for (uint32_t layer=1; layer<=4; layer++) {
+  for (uint32_t layer=1; layer<=14; layer++) {
     if (getTrackerLayerCase(substr, layer) == 0) count++;
   }
   return count;
@@ -974,7 +974,7 @@ int HitPattern::pixelBarrelLayersWithoutMeasurement() const {
   int count = 0;
   uint32_t substr = PixelSubdetector::PixelBarrel;
   // TODO should get the variable for max number of layers (not hardcode it!)
-  for (uint32_t layer=1; layer<=4; layer++) {
+  for (uint32_t layer=1; layer<=14; layer++) {
     if (getTrackerLayerCase(substr, layer) == 1) count++;
   }
   return count;
@@ -1047,7 +1047,7 @@ int HitPattern::pixelBarrelLayersTotallyOffOrBad() const {
   int count = 0;
   uint32_t substr = PixelSubdetector::PixelBarrel;
   // TODO should get the variable for max number of layers (not hardcode it!)
-  for (uint32_t layer=1; layer<=4; layer++) {
+  for (uint32_t layer=1; layer<=14; layer++) {
     if (getTrackerLayerCase(substr, layer) == 2) count++;
   }
   return count;
@@ -1120,7 +1120,7 @@ int HitPattern::pixelBarrelLayersNull() const {
   int count = 0;
   uint32_t substr = PixelSubdetector::PixelBarrel;
   // TODO should get the variable for max number of layers (not hardcode it!)
-  for (uint32_t layer=1; layer<=4; layer++) {
+  for (uint32_t layer=1; layer<=14; layer++) {
     if (getTrackerLayerCase(substr, layer) == 999999) count++;
   }
   return count;
