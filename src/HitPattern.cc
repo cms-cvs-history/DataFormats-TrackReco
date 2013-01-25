@@ -337,7 +337,7 @@ uint32_t HitPattern::getTrackerMonoStereo (uint32_t substr, uint32_t layer) cons
 int HitPattern::pixelBarrelLayersWithMeasurement() const {
   int count = 0;
   uint32_t substr = PixelSubdetector::PixelBarrel;
-  uint32_t NPixBarrel = 4;
+  uint32_t NPixBarrel = 14;
   for (uint32_t layer=1; layer<=NPixBarrel; layer++) {
     if (getTrackerLayerCase(substr, layer) == 0) count++;
   }
@@ -394,7 +394,7 @@ int HitPattern::stripTECLayersWithMeasurement() const {
 int HitPattern::pixelBarrelLayersWithoutMeasurement() const {
   int count = 0;
   uint32_t substr = PixelSubdetector::PixelBarrel;
-  uint32_t NPixBarrel = 4;
+  uint32_t NPixBarrel = 14;
   for (uint32_t layer=1; layer<=NPixBarrel; layer++) {
     if (getTrackerLayerCase(substr, layer) == 1) count++;
   }
@@ -451,7 +451,7 @@ int HitPattern::stripTECLayersWithoutMeasurement() const {
 int HitPattern::pixelBarrelLayersTotallyOffOrBad() const {
   int count = 0;
   uint32_t substr = PixelSubdetector::PixelBarrel;
-  uint32_t NPixBarrel = 4;
+  uint32_t NPixBarrel = 14;
   for (uint32_t layer=1; layer<=NPixBarrel; layer++) {
     if (getTrackerLayerCase(substr, layer) == 2) count++;
   }
@@ -508,7 +508,7 @@ int HitPattern::stripTECLayersTotallyOffOrBad() const {
 int HitPattern::pixelBarrelLayersNull() const {
   int count = 0;
   uint32_t substr = PixelSubdetector::PixelBarrel;
-  uint32_t NPixBarrel = 4;
+  uint32_t NPixBarrel = 14;
   for (uint32_t layer=1; layer<=NPixBarrel; layer++) {
     if (getTrackerLayerCase(substr, layer) == 999999) count++;
   }
